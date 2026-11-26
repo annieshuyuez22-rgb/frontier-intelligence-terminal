@@ -181,6 +181,7 @@ npm run verify:live
 - LLM：OpenAI-compatible 端点与模型；未配置不影响保守采集。
 - Resend：已验证发件域名和 API Key；Webhook 目标由用户提供。
 - 非美元 FX 使用 Frankfurter 公共 API；其可用性和支持币种是外部依赖，失败时资格保持未知。
+- Vercel Git 自动部署：当前账户尚未添加 GitHub Login Connection；本次已用 Vercel CLI 真实部署，连接该授权后才可改为 push 自动部署。
 
 ### 明确限制
 
