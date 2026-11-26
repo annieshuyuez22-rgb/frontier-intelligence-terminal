@@ -6,21 +6,42 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node --env-file-if-exists=.env.local --env-file-if-exists=.env --conditions=react-server --import tsx scripts/run-migrations.ts",
+    "worker": "node --env-file-if-exists=.env.local --env-file-if-exists=.env --conditions=react-server --import tsx scripts/local-worker.ts",
+    "verify:live": "node --env-file-if-exists=.env.local --env-file-if-exists=.env --conditions=react-server --import tsx scripts/verify-live.ts"
   },
   "dependencies": {
+    "cheerio": "^1.2.0",
+    "decimal.js": "^10.6.0",
+    "drizzle-orm": "^0.45.4",
+    "fast-xml-parser": "^5.12.1",
+    "lucide-react": "^1.81.0",
     "next": "16.4.6",
+    "postgres": "^4.1.1",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@tailwindcss/turbopack": "4.3.3",
-    "@types/node": "^20",
+    "@types/node": "^24.19.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^5.1.2",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "tailwindcss": "4.3.3",
-    "typescript": "^5"
+    "tsx": "^4.23.15",
+    "typescript": "^5",
+    "vitest": "^5.1.2"
   }
 }

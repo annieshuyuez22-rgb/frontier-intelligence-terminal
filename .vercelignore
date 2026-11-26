@@ -1,0 +1,10 @@
+.env*
+.vercel
+.next
+node_modules
+coverage
+artifacts
+test-results
+playwright-report
+*.tsbuildinfo
+.DS_Store

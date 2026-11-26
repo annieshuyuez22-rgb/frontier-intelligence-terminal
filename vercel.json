@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "schedules": {
+    "frontier-refresh-worker": {
+      "schedule": "*/15 * * * *",
+      "timezone": "UTC",
+      "path": "/api/cron?action=refresh",
+      "requestMethod": "POST"
+    },
+    "frontier-brief-delivery": {
+      "schedule": "7,22,37,52 * * * *",
+      "timezone": "UTC",
+      "path": "/api/cron?action=deliver",
+      "requestMethod": "POST"
+    }
+  }
+}
