@@ -170,7 +170,7 @@ npm run verify:live
 - SSRF、跨站请求、未授权、演示隔离、真实任务执行和部分失败保留。
 - 自动任务重跑不重复投递，所有演示关键数字可追溯到对应 fixture 来源。
 
-本次交付实测：46 项 Vitest 全部通过；覆盖率约语句 84%、行 89%；5 项 Playwright 桌面/移动/中英文测试全部通过；13 项真实数据库与 RSS 端到端检查全部通过；TypeScript、ESLint、Next.js 生产构建通过；`npm audit --omit=dev` 为 0 漏洞。Playwright 默认使用本机 Chrome，可用 `CHROME_PATH` 和 `E2E_BASE_URL` 修改环境。
+本次交付实测：49 项 Vitest 全部通过；覆盖率约语句 84%、行 89%；5 项 Playwright 桌面/移动/中英文测试全部通过；13 项真实数据库与 RSS 端到端检查全部通过；TypeScript、ESLint、Next.js 生产构建通过；`npm audit --omit=dev` 为 0 漏洞。Playwright 默认使用本机 Chrome，可用 `CHROME_PATH` 和 `E2E_BASE_URL` 修改环境。
 
 ## 功能状态与外部限制
 

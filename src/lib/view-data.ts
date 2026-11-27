@@ -1,6 +1,6 @@
 import "server-only";
 import { and, desc, eq, gte, ilike, inArray, lte, ne, notInArray, or, sql, type SQL } from "drizzle-orm";
-import { getDb, hasDatabase } from "@/db";
+import { getDb, hasDatabase, withDbRetry } from "@/db";
 import {
   citations,
   claims,
@@ -239,7 +239,7 @@ export async function getDataMode(): Promise<DataMode> {
   return getCookieMode();
 }
 
-export async function listEvents(filters: EventFilters = {}, requestedMode?: DataMode): Promise<EventRecord[]> {
+async function readEvents(filters: EventFilters = {}, requestedMode?: DataMode): Promise<EventRecord[]> {
   const mode = requestedMode ?? await getDataMode();
   if (mode === "demo") return filterDemo(DEMO_EVENTS.map((event) => structuredClone(event)), filters);
   const db = getDb();
@@ -305,7 +305,7 @@ export async function listEvents(filters: EventFilters = {}, requestedMode?: Dat
   return hydrateEvents(rows);
 }
 
-export async function getEvent(idOrSlug: string, requestedMode?: DataMode): Promise<EventRecord | null> {
+async function readEvent(idOrSlug: string, requestedMode?: DataMode): Promise<EventRecord | null> {
   const mode = requestedMode ?? await getDataMode();
   if (mode === "demo") {
     const event = DEMO_EVENTS.find((item) => item.id === idOrSlug || item.slug === idOrSlug);
@@ -361,7 +361,7 @@ function mapBrief(row: typeof dailyBriefs.$inferSelect): DailyBriefRecord {
   };
 }
 
-export async function getTodayBrief(requestedMode?: DataMode): Promise<DailyBriefRecord | null> {
+async function readTodayBrief(requestedMode?: DataMode): Promise<DailyBriefRecord | null> {
   const mode = requestedMode ?? await getDataMode();
   if (mode === "demo") return structuredClone(DEMO_BRIEF);
   const db = getDb();
@@ -522,4 +522,16 @@ export async function getSystemStatus(requestedMode?: DataMode): Promise<SystemS
       error: error instanceof Error ? error.message : "数据库连接失败",
     };
   }
+}
+
+export async function listEvents(filters: EventFilters = {}, requestedMode?: DataMode): Promise<EventRecord[]> {
+  return withDbRetry("events.list", () => readEvents(filters, requestedMode));
+}
+
+export async function getEvent(idOrSlug: string, requestedMode?: DataMode): Promise<EventRecord | null> {
+  return withDbRetry("events.detail", () => readEvent(idOrSlug, requestedMode));
+}
+
+export async function getTodayBrief(requestedMode?: DataMode): Promise<DailyBriefRecord | null> {
+  return withDbRetry("brief.today", () => readTodayBrief(requestedMode));
 }

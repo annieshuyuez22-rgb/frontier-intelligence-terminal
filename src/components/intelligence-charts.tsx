@@ -76,7 +76,7 @@ export function IntelligenceCharts({ events, brief, language }: { events: EventR
               <polyline className="chart-line" points={linePoints.map((point) => `${point.x},${point.y}`).join(" ")} />
               {linePoints.map((point) => (
                 <g key={point.date}>
-                  <circle className="chart-point" cx={point.x} cy={point.y} r="4"><title>{point.date}: {point.count}</title></circle>
+                  <circle className="chart-point" cx={point.x} cy={point.y} r="4"><title>{`${point.date}: ${point.count}`}</title></circle>
                   <text className="chart-axis-text" x={point.x} y="185" textAnchor="middle">{point.date.slice(5)}</text>
                   <text className="chart-axis-text" x={point.x} y={point.y - 10} textAnchor="middle">{point.count}</text>
                 </g>

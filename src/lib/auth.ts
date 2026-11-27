@@ -1,7 +1,8 @@
 import { randomBytes, scrypt, timingSafeEqual, createHash } from "node:crypto";
+import { cache } from "react";
 import { and, eq, gt, sql } from "drizzle-orm";
 import { cookies } from "next/headers";
-import { hasDatabase, requireDb } from "@/db";
+import { hasDatabase, requireDb, withDbRetry } from "@/db";
 import { events, preferences, sessions, sources, users } from "@/db/schema";
 import { DEFAULT_SOURCES } from "./default-sources";
 import type { DataMode } from "./domain";
@@ -102,20 +103,22 @@ export async function clearSessionCookie(): Promise<void> {
   });
 }
 
-export async function getCurrentUser(): Promise<CurrentUser | null> {
+async function readCurrentUser(): Promise<CurrentUser | null> {
   if (!hasDatabase()) return null;
   const store = await cookies();
   const token = store.get(SESSION_COOKIE)?.value;
   if (!token || token.length > 128) return null;
   const db = requireDb();
-  const rows = await db
+  const rows = await withDbRetry("auth.currentUser", () => db
     .select({ id: users.id, email: users.email, name: users.name, role: users.role })
     .from(sessions)
     .innerJoin(users, eq(users.id, sessions.userId))
     .where(and(eq(sessions.tokenHash, hashToken(token)), gt(sessions.expiresAt, new Date())))
-    .limit(1);
+    .limit(1));
   return rows[0] ?? null;
 }
+
+export const getCurrentUser = cache(readCurrentUser);
 
 export async function requireUser(): Promise<CurrentUser> {
   const user = await getCurrentUser();
@@ -138,14 +141,17 @@ export async function logoutCurrentSession(): Promise<void> {
   await clearSessionCookie();
 }
 
-export async function getDataMode(): Promise<DataMode> {
+async function readDataMode(): Promise<DataMode> {
   if (!hasDatabase()) return "demo";
   const store = await cookies();
   const configured = store.get(MODE_COOKIE)?.value;
   if (configured === "demo" || configured === "live") return configured;
-  const existing = await requireDb().select({ id: events.id }).from(events).where(eq(events.mode, "live")).limit(1);
+  const db = requireDb();
+  const existing = await withDbRetry("auth.dataMode", () => db.select({ id: events.id }).from(events).where(eq(events.mode, "live")).limit(1));
   return existing.length ? "live" : "demo";
 }
+
+export const getDataMode = cache(readDataMode);
 
 export async function setDataMode(mode: DataMode): Promise<void> {
   const store = await cookies();
