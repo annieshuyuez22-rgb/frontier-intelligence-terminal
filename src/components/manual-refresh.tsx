@@ -70,6 +70,10 @@ export function ManualRefresh({ mode, initialJob = null }: { mode: DataMode; ini
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
       });
+      if (response.status === 401) {
+        setMessage(t("实时内容可直接阅读，无需登录；采集更新仅管理员可用。请登录，或先完成首次配置。", "Live intelligence is public. Only administrators can run collection. Sign in or complete first-time setup."));
+        return;
+      }
       const data = await readApiJson<{ job: RefreshJobRecord; existing: boolean }>(response);
       setJob(data.job);
       setMessage(data.existing ? t("已有相同窗口的任务，已接入该任务，未重复执行", "An existing job covers this window; joined it without duplicating work") : t("任务已排队，后端会防止重复执行", "Job queued; the backend prevents duplicate execution"));
@@ -86,7 +90,7 @@ export function ManualRefresh({ mode, initialJob = null }: { mode: DataMode; ini
     <div className="refresh-control">
       <button className="button button-primary" type="button" onClick={() => void refresh()} disabled={mode === "live" && running}>
         {running ? <LoaderCircle className="spin" aria-hidden="true" size={15} /> : <RefreshCw aria-hidden="true" size={15} />}
-        {running ? t("更新进行中", "Updating") : t("手动更新", "Refresh now")}
+        {running ? t("更新进行中", "Updating") : mode === "live" ? t("管理员更新", "Admin refresh") : t("手动更新", "Refresh now")}
       </button>
       {job ? (
         <div className="refresh-status" aria-live="polite">
