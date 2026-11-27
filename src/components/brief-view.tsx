@@ -44,7 +44,6 @@ export function BriefView({ brief, events, mode, language }: { brief: DailyBrief
         <dl>
           <div><dt>{t("统计窗口", "Statistical window")}</dt><dd>{formatDateTime(brief.coverage.windowStart, brief.timezone, language)} — {formatDateTime(brief.coverage.windowEnd, brief.timezone, language)} ({brief.timezone})</dd></div>
           <div><dt>{t("样本与覆盖", "Sample & coverage")}</dt><dd>{brief.coverage.sampleSize} {t("条样本", "samples")}; {brief.coverage.channels.length > 0 ? brief.coverage.channels.join(" / ") : t("渠道覆盖未知", "Channel coverage unknown")}</dd></div>
-          <div><dt>{t("解释边界", "Interpretation limits")}</dt><dd>{brief.coverage.caveats} {t("采集增长不等于市场热度，样本变化也可能来自渠道启停或抓取失败。", "Collection growth is not market momentum; sample changes may also reflect channel toggles or fetch failures.")}</dd></div>
           <div><dt>{t("生成时间", "Generated at")}</dt><dd>{formatDateTime(brief.generatedAt, brief.timezone, language)}</dd></div>
         </dl>
       </div>
